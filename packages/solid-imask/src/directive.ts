@@ -24,6 +24,7 @@ interface SolidMaskedDirectiveInterface<
   ) => void;
   value?: () => InputMask<Opts>['value'];
   unmaskedValue?: () => InputMask<Opts>['unmaskedValue'];
+  typedValue?: () => InputMask<Opts>['typedValue'];
 }
 
 declare module 'solid-js' {
@@ -57,10 +58,17 @@ const masked = <
     ) => void;
     value?: () => InputMask<Opts>['value'];
     unmaskedValue?: () => InputMask<Opts>['unmaskedValue'];
+    typedValue?: () => InputMask<Opts>['typedValue'];
   }
 ) => {
-  const { mask, onAccept, onComplete, value, unmaskedValue } = props();
+  const { mask, onAccept, onComplete, value, unmaskedValue, typedValue } = props();
   const m = IMask(el, mask);
+
+  createEffect(() => {
+    if (m && typedValue) {
+      m.typedValue = typedValue();
+    }
+  });
 
   createEffect(() => {
     if (m && unmaskedValue) {
